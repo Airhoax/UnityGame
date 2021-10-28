@@ -21,19 +21,19 @@ public class Player_jump : MonoBehaviour
         jump=Input.GetButton("Jump");
     }
 
-    void OnCollisionEnter(Collision collision)
+    void OnTriggerEnter(Collider collision)
     {
-        collisionCount++;
+        if(GameObject.Find(collision.name).transform.parent.name!="Player Hand"){collisionCount++;}
     }
 
-    void OnCollisionExit(Collision collision)
+    void OnTriggerExit(Collider collision)
     {
-        collisionCount--;
+        if(GameObject.Find(collision.name).transform.parent.name!="Player Hand"){collisionCount--;}
     }
 
      void FixedUpdate()
     {
         //jump
-        if(jump && player.velocity.y==0){player.AddForce(Vector3.up*250);}
+        if(jump && collisionCount>0){player.AddForce(Vector3.up*100);}
     }
 }

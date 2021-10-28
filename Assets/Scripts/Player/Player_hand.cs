@@ -4,60 +4,110 @@ using UnityEngine;
 
 public class Player_hand : MonoBehaviour
 {
-    public Transform item;
-    private Transform inHoldingItem;
-    public Transform holding;
-    private Rigidbody itemRigitbody;
+
+    private bool  placeMode;
+    private bool canPlace;
+    private int handFilled;
+    private GameObject handFull;
+    private Transform item;
+    private Transform copy;
+    public Transform items;
+    private Transform right;
+    private Transform left;
 
     // Start is called before the first frame update
     void Start()
     {
+        placeMode=false;
+        handFilled=0;
+        right=transform.GetChild(0);
+        left=transform.GetChild(1);
     }
 
     // Update is called once per frame
     void Update()
     {
-        //item drop
-        if(Input.GetButtonDown("Pick Up Drop") && transform.childCount>0 && holding.childCount>0)
-        {
-            //enable cpllider
-            item.GetComponent<Collider>().enabled=true;
-            //unfreez item rigitbody
-            itemRigitbody.constraints = RigidbodyConstraints.FreezeRotation;
-            //removes item from hand
-            item.parent=null;
-            //destroy in hand item
-            Destroy(inHoldingItem.gameObject);
-        }
+        //place mode 
+        if(Input.GetButtonDown("Place Mode")){placeMode=!placeMode;}
+        if(handFilled==0 || handFilled==3){placeMode=false;}
 
-        //no item in hand
-        if(transform.childCount==0){item=null;}
+        //pick hand and count items
+        if(!placeMode )
+        {
+            if(transform.childCount>2)
+            {
+                if(handFilled==1)
+                {
+                    transform.GetChild(2).SetParent(left);
+                    handFull = new GameObject("handFull");
+                    handFull.transform.SetParent(transform);
+                    handFilled=2;
+                }
+                else if(handFilled==0)
+                {
+                    transform.GetChild(2).SetParent(right);
+                    handFilled=1;
+                }
+                if(handFilled==1 || handFilled==3){Destroy(handFull);}
+            }
+
+            //switch hand
+            if(handFilled>0 && Input.GetButtonDown("Switch"))
+            {
+                switch (handFilled)
+                {
+                    case 1:
+                    handFilled=3;
+                    right.GetChild(0).SetParent(left);
+                    break;
+                    case 3:
+                    handFilled=1;
+                    left.GetChild(0).SetParent(right);
+                    break;
+                    case 2:
+                    right.GetChild(0).SetParent(left);
+                    left.GetChild(0).SetParent(right);
+                    break;
+                    default:
+                    break;
+                }
+            }
         
-        //item in hand
-        else if(holding.childCount>0)
-        {
-            //controls rotation off item in hand and item
-            item.rotation=new Quaternion(-transform.rotation.x,0f,-transform.rotation.z,0f);
-            inHoldingItem.rotation=holding.rotation;
+
+            //end place mode
+            if(right.childCount==2)
+            {
+                item.position=copy.position;
+                item.rotation=copy.rotation;
+                Destroy(copy.gameObject);
+            }
         }
 
-        //on item picked up
-        else if(holding.childCount==0)
+        //place mode on
+        if(placeMode)
         {
-            //get item
-            item=transform.GetChild(0);
-            itemRigitbody=item.GetComponent<Rigidbody>();
-            //freez item rigitbody
-            itemRigitbody.constraints=RigidbodyConstraints.FreezeAll;
-            //disable item colider
-            item.GetComponent<Collider>().enabled=false;
             //position item
+            item = right.GetChild(0); 
+            item.rotation=new Quaternion(-transform.rotation.x,0f,-transform.rotation.z,0f);
+            item.GetComponent<Rigidbody>().constraints=RigidbodyConstraints.FreezeAll;
+            item.GetComponent<Collider>().isTrigger=true;
             item.position=transform.position;
-            //create in hand item
-            inHoldingItem = Instantiate(item,holding.position,holding.rotation);
-            inHoldingItem.SetParent(holding);
-            //change original item material !!!this will change soon!!!
-            item.GetComponent<Renderer>().material.color=Color.blue;
+            if(right.childCount==1)
+            {
+                copy=Instantiate(item,right.position,right.rotation);
+                copy.SetParent(right);
+            }
+            //drop
+            if(Input.GetButtonDown("Pick Up Drop"))
+            {
+                placeMode=false;
+                item.SetParent(items);
+                item.GetComponent<Collider>().isTrigger=false;
+                item.GetComponent<Rigidbody>().constraints=RigidbodyConstraints.FreezeRotation;
+                Destroy(copy.gameObject);
+                if(left.childCount==1){handFilled=3;}
+                else{handFilled=0;}
+            }
         }
     }
 }

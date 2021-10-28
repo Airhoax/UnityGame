@@ -126,4 +126,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hand: {fileID: 0}
-  itemMaterial: {fileID: 2100000, guid: e3a50f060632ec6499b5b2d69327d95f, type: 2}
+  trigger: 0

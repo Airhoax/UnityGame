@@ -37,11 +37,13 @@
   </PropertyGroup>
   <ItemGroup>
      <Compile Include="Assets\Scripts\Player\Player_movement.cs" />
+     <Compile Include="Assets\Scripts\Player\Right_hand.cs" />
      <Compile Include="Assets\Scripts\Player\Switch_camera.cs" />
      <Compile Include="Assets\Scripts\Player\Player_look_vertical.cs" />
-     <Compile Include="Assets\Scripts\Items\Pick_up_and_drop.cs" />
-     <Compile Include="Assets\Scripts\Player\Player_hand.cs" />
      <Compile Include="Assets\Scripts\Player\Player_jump.cs" />
+     <Compile Include="Assets\Scripts\Items\Pick_up.cs" />
+     <Compile Include="Assets\Scripts\Player\Player_hand.cs" />
+     <Compile Include="Assets\Scripts\Player\Left_hand.cs" />
     <Reference Include="UnityEngine">
         <HintPath>C:/Main/Programing/Programs/unity_editors/2020.3.14f1/Editor/Data/Managed/UnityEngine/UnityEngine.dll</HintPath>
     </Reference>
